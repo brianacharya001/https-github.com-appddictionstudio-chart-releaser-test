@@ -2,7 +2,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: nginx-deployment
+  name: va-app
   namespace: vapo-demo
   labels:
     app: va-app
