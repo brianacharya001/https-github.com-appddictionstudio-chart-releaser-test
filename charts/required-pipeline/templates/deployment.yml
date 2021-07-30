@@ -21,3 +21,5 @@ spec:
         image: quay.vapo.va.gov/vic-dev/dev:1.0.0
         ports:
         - containerPort: 2424
+      imagePullSecrets:
+      - name: vic-dev-vicdevdeployrobot-pull-secret
