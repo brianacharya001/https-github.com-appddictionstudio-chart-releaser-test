@@ -57,10 +57,10 @@ spec:
         - compile-to-nexus
       resources:
         inputs:
-        - name: source
-          resource: vic-source
+        - name: source-code
+          resource: source-code
         outputs:
-        - name: image-destination
+        - name: image-source
           resource: vapo-image-registry
     # 5 - Send CVE Report to Nexus for Security Review
     - name: send-cve-report
