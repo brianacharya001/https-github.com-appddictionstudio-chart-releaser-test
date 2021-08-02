@@ -42,7 +42,7 @@ spec:
     # 3 - Compile Binaries and Artifacts to Nexus
     - name: compile-to-nexus
       params:
-      testRef:
+      taskRef:
         name: 3-compile-and-send-2-nexus
       runAfter: 
         - sast-scanning
