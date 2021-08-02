@@ -62,37 +62,37 @@ spec:
         outputs:
         - name: image-destination
           resource: vapo-image-registry
-      # 5 - Send CVE Report to Nexus for Security Review
-      - name: send-cve-report
-        params:
-          - name: scan-image
-            value: quay.io/ksummersill2/trivy:0.17.1
-        taskRef:
-          name: 5-cve-trivy-scanner
-        runAfter:
-          - build-image-scan-with-oci
-        resources:
-          inputs:
-          - name: image-to-scan
-            resource: vapo-image-registry
-      # 6 - End to End Testing
-      - name: end-to-end-testing
-        params:
-        taskRef:
-          name: 6-end-to-end-testing
-        runAfter:
-          - send-cve-report
-      # 7 - DAST Scanning
-      - name: dast-scanning
-        params:
-        taskRef: 
-          name: 7-dast-scanning
-        runAfter:
-          - end-to-end-testing
-      # 8 - Deploy the Stack to Environment
-      - name: deploy-stack
-        params:
-        taskRef:
-          name: 8-helm-app-deployer
-        runAfter:
-          - dast-scanning
+    # 5 - Send CVE Report to Nexus for Security Review
+    - name: send-cve-report
+      params:
+        - name: scan-image
+          value: quay.io/ksummersill2/trivy:0.17.1
+      taskRef:
+        name: 5-cve-trivy-scanner
+      runAfter:
+        - build-image-scan-with-oci
+      resources:
+        inputs:
+        - name: image-to-scan
+          resource: vapo-image-registry
+    # 6 - End to End Testing
+    - name: end-to-end-testing
+      params:
+      taskRef:
+        name: 6-end-to-end-testing
+      runAfter:
+        - send-cve-report
+    # 7 - DAST Scanning
+    - name: dast-scanning
+      params:
+      taskRef: 
+        name: 7-dast-scanning
+      runAfter:
+        - end-to-end-testing
+    # 8 - Deploy the Stack to Environment
+    - name: deploy-stack
+      params:
+      taskRef:
+        name: 8-helm-app-deployer
+      runAfter:
+        - dast-scanning
