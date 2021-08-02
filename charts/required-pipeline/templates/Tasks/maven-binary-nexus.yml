@@ -2,7 +2,7 @@ apiVersion: tekton.dev/v1alpha1
 kind: Task
 metadata:
   name: 3-compile-and-send-2-nexus
-  namespace: yoda
+  namespace: vapo-demo
 spec:
   inputs:
     params:

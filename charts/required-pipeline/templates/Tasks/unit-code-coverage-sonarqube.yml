@@ -2,7 +2,7 @@ apiVersion: tekton.dev/v1alpha1
 kind: Task
 metadata:
   name: 1-unit-test-code-coverage
-  namespace: yoda
+  namespace: vapo-demo
 spec:
   inputs:
     params:
