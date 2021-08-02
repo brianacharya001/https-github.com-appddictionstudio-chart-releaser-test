@@ -3,6 +3,8 @@ kind: Task
 metadata:
   name: helm-pipeline-deployer-task
   namespace: vapo-demo
+  annotations:
+    app.kubernetes.io/managed-by: helm
 spec:
   inputs:
     params:

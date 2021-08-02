@@ -3,6 +3,8 @@ kind: Task
 metadata:
   name: 4-buildah-task
   namespace: vapo-demo
+  annotations:
+    app.kubernetes.io/managed-by: helm
 spec:
   inputs:
     params:

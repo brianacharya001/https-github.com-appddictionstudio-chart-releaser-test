@@ -3,6 +3,8 @@ kind: Task
 metadata:
   name: 1-unit-test-code-coverage
   namespace: vapo-demo
+  annotations:
+    app.kubernetes.io/managed-by: helm
 spec:
   inputs:
     params:
