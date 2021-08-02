@@ -57,10 +57,10 @@ spec:
         - compile-to-nexus
       resources:
         inputs:
-        - name: source-code
-          resource: source-code
+        - name: source
+          resource: vic-source
         outputs:
-        - name: image-source
+        - name: image-destination
           resource: vapo-image-registry
     # 5 - Send CVE Report to Nexus for Security Review
     - name: send-cve-report
@@ -93,6 +93,6 @@ spec:
     - name: deploy-stack
       params:
       taskRef:
-        name: helm-app-deployer
+        name: 8-helm-app-deployer
       runAfter:
         - dast-scanning
