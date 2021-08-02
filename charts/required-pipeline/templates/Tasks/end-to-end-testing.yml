@@ -1,13 +1,13 @@
 apiVersion: tekton.dev/v1alpha1
 kind: Task
 metadata:
-  name: 8-Deployment
+  name: 6-end-to-end-testing
   namespace: vapo-demo
   annotations:
     app.kubernetes.io/managed-by: helm
 spec:
   steps:
-    - name: deploying-stack
+    - name: end-to-end-testing
       image: quay.io/ksummersill2/ubuntu-wget:1.0.0
       script: |
-        echo "Deploying the Application"
+        echo "End To End Testing Place Holder"

@@ -84,4 +84,3 @@ spec:
         APP_NAME=$(params.application-name)
         SONARQUBE_JAVA_BINARIES_PATH="$(params.working-directory)/$(params.sonarqube-binary-path)"
         sonar-scanner -X -Dsonar.login=${SONARQUBE_USER} -Dsonar.password=${SONARQUBE_PASSWORD} -Dsonar.host.url=${SONARQUBE_URL} -Dsonar.qualitygate.wait=true -Dsonar.scm.disabled=true
-    #-Dsonar.java.binaries=${SONARQUBE_JAVA_BINARIES_PATH} -Dsonar.projectVersion=${SONARQUBE_PROJECT_VERSION} #-Dsonar.projectKey=${APP_NAME} 
