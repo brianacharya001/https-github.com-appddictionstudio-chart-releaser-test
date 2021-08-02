@@ -3,6 +3,15 @@ entries:
   vapo-helm-chart:
   - apiVersion: v1
     appVersion: 1.0.1
+    created: "2021-08-02T14:33:48.791571738Z"
+    description: VAPO Helm Chart
+    digest: 089f3068ea51d9bb2b3efda3f2c3190a753f26a37cfd5b7a6444e1890ab1d3d0
+    name: vapo-helm-chart
+    urls:
+    - https://github.com/appddictionstudio/chart-releaser-test/releases/download/vapo-helm-chart-1.0.4/vapo-helm-chart-1.0.4.tgz
+    version: 1.0.4
+  - apiVersion: v1
+    appVersion: 1.0.1
     created: "2021-07-29T22:01:22.87297165Z"
     description: VAPO Helm Chart
     digest: f6167214795d4b9506e0e28915065092e7c1e4591ef712d4a9b3d0336de0c7ef
