@@ -93,6 +93,6 @@ spec:
     - name: deploy-stack
       params:
       taskRef:
-        name: 8-helm-app-deployer
+        name: helm-app-deployer
       runAfter:
         - dast-scanning
