@@ -58,7 +58,7 @@ spec:
       resources:
         inputs:
         - name: source
-          resource: vic-source
+          resource: source-code
         outputs:
         - name: image-destination
           resource: vapo-image-registry
