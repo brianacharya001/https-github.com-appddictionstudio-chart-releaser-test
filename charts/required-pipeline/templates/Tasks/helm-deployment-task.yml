@@ -1,7 +1,7 @@
 apiVersion: tekton.dev/v1alpha1
 kind: Task
 metadata:
-  name: helm-pipeline-deployer-task
+  name: helm-app-deployer
   namespace: vapo-demo
   annotations:
     app.kubernetes.io/managed-by: helm
