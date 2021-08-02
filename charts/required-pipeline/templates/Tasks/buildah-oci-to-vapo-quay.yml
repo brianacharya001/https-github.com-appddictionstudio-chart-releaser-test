@@ -1,0 +1,94 @@
+apiVersion: tekton.dev/v1alpha1
+kind: Task
+metadata:
+  name: 4-buildah-task
+  namespace: yoda
+spec:
+  inputs:
+    params:
+    - name: VAPO_QUAY_TLSVERIFY
+      description: "Identifies weather or not to use TLS for the VAPO Quay"
+      type: string
+      default: "false"
+    - name: TAG_IMAGE_NAME
+      description: "Identifies the destination image location and tag"
+      type: string
+      default: "quay.vapo.va.gov/vic-dev/dev:1.0.0"
+    - name: BUILDAH_IMAGE
+      description: "Identifies the Buildah Image"
+      type: string
+      default: registry.redhat.io/rhel8/buildah@sha256:180c4d9849b6ab0e5465d30d4f3a77765cf0d852ca1cb1efb59d6e8c9f90d467
+    - name: BUILDAH_STORAGE_DRIVER
+      description: "Buildah Storage Driver"
+      default: overlay
+    - name: DOCKERFILE_NAME
+      description: "Identifies the location and name of the dockerfile"
+      type: string
+      default: "/docker/dev-vic-multi-stage"
+    - name: DOCKER_CONTEXT_ROOT
+      description: "Identifies the Docker context root location"
+      type: "string"
+      default: .
+    - name: STANDARD_IMAGE_FORMAT
+      type: "string"
+      # Open Container Initiative format set to default
+      default: "oci"
+    - name: WORKING_DIRECTORY
+      description: Identifies the location of the source code within the workspace
+      type: "string"
+      default: "/workspace/source-code"
+    - name: TRIVY_IMAGE
+      description: Identifes the Trivy Image to use for scanning the OCI spec of the image
+      default: quay.io/ksummersill2/trivy:0.17.2
+    resources:
+    - name: source-code
+      type: git
+      description: Identifies the Pipeline Resource to Clone the Source Code
+  steps:
+  - name: build-image
+    image: $(params.BUILDAH_IMAGE)
+    workingDir: $(params.WORKING_DIRECTORY)
+    # Capability of turning caching on and off by adding or removing --no-cache option to buildah.
+    script: |
+      buildah --storage-driver=$(params.BUILDAH_STORAGE_DRIVER) bud --ulimit nofile=1048576:1048576 \
+      --format=$(params.STANDARD_IMAGE_FORMAT) --tls-verify=$(params.VAPO_QUAY_TLSVERIFY) \
+      -f $(params.DOCKERFILE_NAME) -t $(params.TAG_IMAGE_NAME) $(params.DOCKER_CONTEXT_ROOT)
+      buildah push $(buildah images | grep -E '^quay.vapo.va.gov\/vic-dev\/dev.*1.0.0' | awk -e '{print $3}') oci:/workspace/app-image:app:1.0.0
+    volumeMounts:
+    - name: varlibcontainers
+      mountPath: /var/lib/containers
+    securityContext:
+      privileged: true
+  - name: get-latest-cve-findings
+    image: quay.io/ksummersill2/ubuntu-wget:1.0.0
+    script: |
+      mkdir -p /tekton/home/.cache/trivy/db
+      wget -O /tekton/home/.cache/trivy/db/trivy-offline.db.tgz https://github.com/aquasecurity/trivy-db/releases/latest/download/trivy-offline.db.tgz --no-check-certificate
+      cd /tekton/home/.cache/trivy/db
+      tar xvf trivy-offline.db.tgz
+  - name: initial-oci-scan
+    image: $(params.TRIVY_IMAGE)
+    workingDir: $(params.WORKING_DIRECTORY)
+    script: |
+      pwd
+      trivy image --skip-update --input /workspace/app-image --severity='HIGH,CRITICAL' --vuln-type='os,library' --format='table'
+    securityContext:
+      privileged: true
+    volumeMounts:
+    - name: varlibcontainers
+      mountPath: /var/lib/containers
+  - name: push-image-to-vapo-quay-dev
+    image: $(params.BUILDAH_IMAGE)
+    workingDir: $(params.WORKING_DIRECTORY)
+    script: |
+      buildah --storage-driver=$(params.BUILDAH_STORAGE_DRIVER) push \
+      --tls-verify=$(params.VAPO_QUAY_TLSVERIFY) \
+      --digestfile docker/image-digest $(params.TAG_IMAGE_NAME) docker://$(params.TAG_IMAGE_NAME)
+    volumeMounts:
+    - name: varlibcontainers
+      mountPath: /var/lib/containers
+    securityContext:
+      privileged: true
+  volumes:
+  - name: varlibcontainers
+    emptyDir: {}

@@ -1,0 +1,45 @@
+apiVersion: tekton.dev/v1alpha1
+kind: Task
+metadata:
+  name: 3-compile-and-send-2-nexus
+  namespace: yoda
+spec:
+  inputs:
+    params:
+    - name: working-directory
+      description: Identifies the location of the source code within the workspace
+      type: string
+      default: "/workspace/source-code/app"
+    - name: target-directory
+      description: Identifies the target directory
+      type: string
+      default: "target"
+    - name: binary-name
+      description: Identifies the Binary Name
+      type: string
+      default: "VIC.war"
+    # Utilize this goal to run JUnit Tests
+    - name: build-goal
+      description: Identifies the test goal for maven
+      type: array
+      default: ["package"]
+    # Identifies the Pipeline Resource to Clone the Source Code
+    resources:
+    - name: source-code
+      type: git
+  steps:
+    # Identfies the location of the maven image used to run the Maven commands
+    - name: mvn
+      image: quay.io/ksummersill2/maven:1.0.0
+      workingDir: $(params.working-directory)
+      command: ["/usr/bin/mvn"]
+      args:
+        - -Dmaven.repo.local=$(params.working-directory)
+        - "$(inputs.params.build-goal)"
+    - name: send-binary-to-nexus
+      image: quay.io/ksummersill2/ubuntu-wget:1.0.1
+      workingDir: $(params.working-directory)
+      script: |
+        ls /workspace/source-code/app/target
+        curl -v -u admin:4ca9c9e3-a593-4832-ba6a-f5c5336d1853 --upload-file /workspace/source-code/app/target/VIC.war http://nexus3-openshift-operators.apps.vapo-ppd.va.gov/repository/vic/1.0/development/VIC.war
+        echo "App Upload Complete"

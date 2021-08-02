@@ -1,0 +1,85 @@
+apiVersion: tekton.dev/v1alpha1
+kind: Task
+metadata:
+  name: 1-unit-test-code-coverage
+  namespace: yoda
+spec:
+  inputs:
+    params:
+    - name: application-name
+      description: Name of Application
+      type: string
+      default: "VIC"
+    - name: build-goal
+      description: Identifies the build goal for maven
+      type: array
+      default: ["package"]
+    - name: test-goal
+      description: Identifies the test goal for maven
+      type: array
+      default: ["test"]
+    - name: maven-image
+      description: Identifies the Maven Image Used to Compile Code
+      type: string
+      default: quay.io/ksummersill2/maven:1.0.0
+    - name: working-directory
+      description: Identifies the location of the source code within the workspace
+      type: string
+      default: "/workspace/source-code/app"
+    - name: sonarqube-image
+      description: Identifies the sonarqube image used to execute the coverage
+      type: string
+      default: quay.io/ibmgaragecloud/sonarsource-sonar-scanner-cli
+    - name: sonarqube-binary-path
+      description: Identifies the path where the binaries are location within the workspace
+      type: string
+      default: target
+    resources:
+    - name: source-code
+      type: git
+      description: Identifies the Pipeline Resource to Clone the Source Code
+  steps:
+    - name: verify-location
+      image: $(params.maven-image)
+      script: |
+        #!/usr/bin/env bash
+        ls /
+        curl https://vision.appddiction1.com
+        ls $(params.working-directory)
+    - name: maven-build
+      image: $(params.maven-image)
+      workingDir: $(params.working-directory)
+      command: ["/usr/bin/mvn"]
+      args:
+        - -Dmaven.repo.local=$(params.working-directory)
+        - "$(inputs.params.test-goal)"
+    - name: verify-binaries
+      image: $(params.maven-image)
+      script: |
+        ls $(params.working-directory)/target
+    - name: maven-test
+      image: $(params.maven-image)
+      workingDir: $(params.working-directory)
+      command: ["/usr/bin/mvn"]
+      args:
+        - -Dmaven.repo.local=$(params.working-directory)
+        - "$(inputs.params.test-goal)"
+    - name: sonarqube-scan
+      image: $(params.sonarqube-image)
+      workingDir: $(params.working-directory)
+      env:
+        - name: SONAR_USER_HOME
+          value: $(params.working-directory)
+        - name: SONARQUBE_URL
+          value: "https://vision.appddiction1.com"
+        - name: SONARQUBE_USER
+          value: "d04d5b3246a923898c2852e0ae11f1bc069530fa"
+        - name: SONARQUBE_PASSWORD
+          value: "admin"
+        - name: SONARQUBE_PROJECT_VERSION
+          value: "1.0.0"
+      script: |
+        APP_NAME=$(params.application-name)
+        SONARQUBE_JAVA_BINARIES_PATH="$(params.working-directory)/$(params.sonarqube-binary-path)"
+        sonar-scanner -X -Dsonar.login=${SONARQUBE_USER} -Dsonar.password=${SONARQUBE_PASSWORD} -Dsonar.host.url=${SONARQUBE_URL} -Dsonar.qualitygate.wait=true -Dsonar.scm.disabled=true
+    #-Dsonar.java.binaries=${SONARQUBE_JAVA_BINARIES_PATH} -Dsonar.projectVersion=${SONARQUBE_PROJECT_VERSION} #-Dsonar.projectKey=${APP_NAME} 

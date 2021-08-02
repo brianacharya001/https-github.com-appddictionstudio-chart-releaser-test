@@ -1,0 +1,25 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: va-app
+  namespace: vapo-demo
+  labels:
+    app: va-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: va-app
+  template:
+    metadata:
+      labels:
+        app: va-app
+    spec:
+      containers:
+      - name: vic
+        image: quay.vapo.va.gov/vic-dev/dev:1.0.0
+        ports:
+        - containerPort: 2424
+      imagePullSecrets:
+      - name: vic-dev-vicdevdeployrobot-pull-secret

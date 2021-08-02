@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: va-app-service
+  namespace: vapo-demo
+spec:
+  selector:
+    app: va-app
+  ports:
+    - protocol: TCP
+      port: 443
+      targetPort: 2424
