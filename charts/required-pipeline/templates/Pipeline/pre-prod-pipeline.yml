@@ -50,12 +50,23 @@ spec:
         inputs:
         - name: source
           resource: source-code
-    # 4 - Build the Image and Scan via the OCI
-    - name: build-image-scan-with-oci
+    # 4a - Build the Image and Scan via the OCI
+    # - name: build-image-scan-with-oci
+    #   params:
+    #   taskRef:
+    #     name: 4-buildah-task
+    #   runAfter: 
+    #     - compile-to-nexus
+    #   resources:
+    #     inputs:
+    #     - name: source
+    #       resource: source-code
+    # 4b - Build the Image with Kaniko as an Alternative to Buildah
+    - name: build-image-with-kaniko
       params:
       taskRef:
-        name: 4-buildah-task
-      runAfter: 
+        name: 4-kaniko-task
+      runAfter:
         - compile-to-nexus
       resources:
         inputs:

@@ -1,7 +1,7 @@
 apiVersion: tekton.dev/v1alpha1
 kind: Task
 metadata:
-  name: kaniko-task
+  name: 4-kaniko-task
   namespace: vapo-demo
   annotations:
     app.kubernetes.io/managed-by: helm
