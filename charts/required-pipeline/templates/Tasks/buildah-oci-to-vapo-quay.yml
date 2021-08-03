@@ -38,7 +38,7 @@ spec:
     - name: WORKING_DIRECTORY
       description: Identifies the location of the source code within the workspace
       type: "string"
-      default: "/workspace/source-code"
+      default: "/workspace/source"
     - name: TRIVY_IMAGE
       description: Identifes the Trivy Image to use for scanning the OCI spec of the image
       default: quay.io/ksummersill2/trivy:0.17.2
