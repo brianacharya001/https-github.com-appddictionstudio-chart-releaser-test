@@ -27,7 +27,7 @@ spec:
     - name: working-directory
       description: Identifies the location of the source code within the workspace
       type: string
-      default: "/workspace/source-code/app"
+      default: "/workspace/source/app"
     - name: sonarqube-image
       description: Identifies the sonarqube image used to execute the coverage
       type: string
@@ -36,17 +36,22 @@ spec:
       description: Identifies the path where the binaries are location within the workspace
       type: string
       default: target
+    - name: sonarqube-endpoint
+      description: Location of SonarQube
+      type: string
+      default: "https://sonarqube-sonarqube-operator.apps.vapo-aws-ppd.va.gov/"
     resources:
     - name: source
       type: git
       description: Identifies the Pipeline Resource to Clone the Source Code
   steps:
-    - name: verify-location
+    - name: verify-sonarqube-location
       image: $(params.maven-image)
       script: |
         #!/usr/bin/env bash
-        ls /
-        curl https://vision.appddiction1.com
+        
+        curl $(params.sonarqube-endpoint) --insecure 
+        
         ls $(params.working-directory)
     - name: maven-build
       image: $(params.maven-image)
@@ -73,7 +78,7 @@ spec:
         - name: SONAR_USER_HOME
           value: $(params.working-directory)
         - name: SONARQUBE_URL
-          value: "https://vision.appddiction1.com"
+          value: $(params.sonarqube-endpoint)
         - name: SONARQUBE_USER
           value: "d04d5b3246a923898c2852e0ae11f1bc069530fa"
         - name: SONARQUBE_PASSWORD

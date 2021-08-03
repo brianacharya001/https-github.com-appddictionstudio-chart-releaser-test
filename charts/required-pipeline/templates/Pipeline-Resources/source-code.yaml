@@ -12,3 +12,5 @@ spec:
     value: https://github.com/department-of-veterans-affairs/vapo-vic.git
   - name: revision
     value: vapo
+  - name: sslVerify
+    value: "false"
