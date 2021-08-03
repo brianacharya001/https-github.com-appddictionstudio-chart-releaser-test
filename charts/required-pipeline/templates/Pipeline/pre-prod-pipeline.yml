@@ -46,8 +46,13 @@ spec:
         name: 3-compile-and-send-2-nexus
       runAfter: 
         - sast-scanning
+      resources:
+        inputs:
+        - name: source
+          resource: source-code
     # 4 - Build the Image and Scan via the OCI
     - name: build-image-scan-with-oci
+      params:
       taskRef:
         name: 4-buildah-task
       runAfter: 

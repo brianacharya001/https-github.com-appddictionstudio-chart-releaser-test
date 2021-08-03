@@ -27,7 +27,7 @@ spec:
       default: ["package"]
     # Identifies the Pipeline Resource to Clone the Source Code
     resources:
-    - name: source-code
+    - name: source
       type: git
   steps:
     # Identfies the location of the maven image used to run the Maven commands
