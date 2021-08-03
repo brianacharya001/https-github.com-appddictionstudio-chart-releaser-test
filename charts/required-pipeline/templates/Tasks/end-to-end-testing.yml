@@ -16,6 +16,9 @@ spec:
       description: Identifies the test goal for maven
       type: array
       default: ["package"]
+    resources:
+    - name: source
+      type: git
   steps:
     - name: end-to-end-testing
       image: quay.io/ksummersill2/ubuntu-wget:1.0.0
