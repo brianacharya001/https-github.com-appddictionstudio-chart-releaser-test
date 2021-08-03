@@ -32,7 +32,6 @@ spec:
         inputs:
         - name: source
           resource: source-code
-      errorStrategy: RunNextTasks
     # 2 - SAST Scanning the Code
     - name: sast-scanning
       params:
@@ -40,7 +39,6 @@ spec:
         name: 2-sast
       runAfter: 
         - unit-testing
-      errorStrategy: RunNextTasks
     # 3 - Compile Binaries and Artifacts to Nexus
     - name: compile-to-nexus
       params:
@@ -52,7 +50,6 @@ spec:
         inputs:
         - name: source
           resource: source-code
-      errorStrategy: RunNextTasks
     # 4 - Build the Image and Scan via the OCI
     - name: build-image-scan-with-oci
       params:
@@ -64,7 +61,6 @@ spec:
         inputs:
         - name: source
           resource: source-code
-      errorStrategy: RunNextTasks
     # 5 - Send CVE Report to Nexus for Security Review
     - name: send-cve-report
       params:
@@ -78,7 +74,6 @@ spec:
         inputs:
         - name: image-source
           resource: vapo-image-registry
-      errorStrategy: RunNextTasks
     # 6 - End to End Testing
     - name: end-to-end-testing
       params:
@@ -86,7 +81,6 @@ spec:
         name: 6-end-to-end-testing
       runAfter:
         - send-cve-report
-      errorStrategy: RunNextTasks
     # 7 - DAST Scanning
     - name: dast-scanning
       params:
@@ -94,7 +88,6 @@ spec:
         name: 7-dast-scanning
       runAfter:
         - end-to-end-testing
-      errorStrategy: RunNextTasks
     # 8 - Deploy the Stack to Environment
     - name: deploy-stack
       params:
