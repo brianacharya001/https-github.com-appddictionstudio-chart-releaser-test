@@ -61,9 +61,6 @@ spec:
         inputs:
         - name: source
           resource: source-code
-        outputs:
-        - name: image-destination
-          resource: vapo-image-registry
     # 5 - Send CVE Report to Nexus for Security Review
     - name: send-cve-report
       params:
