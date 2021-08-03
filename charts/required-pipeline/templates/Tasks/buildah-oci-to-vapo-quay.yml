@@ -49,7 +49,14 @@ spec:
   steps:
   - name: build-image
     image: $(params.BUILDAH_IMAGE)
+    args:
+        - --device /dev/fuse:rw
+        - --security-opt
+        - seccomp=unconfined
+        - --security-opt
+        - apparmor=unconfined
     workingDir: $(params.WORKING_DIRECTORY)
+    command: ["bash"]
     # Capability of turning caching on and off by adding or removing --no-cache option to buildah.
     script: |
       buildah --storage-driver=$(params.BUILDAH_STORAGE_DRIVER) bud --ulimit nofile=1048576:1048576 \
