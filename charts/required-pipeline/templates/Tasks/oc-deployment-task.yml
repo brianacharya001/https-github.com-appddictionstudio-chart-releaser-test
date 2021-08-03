@@ -9,23 +9,28 @@ spec:
   inputs:
     params:
     - name: working-directory
-      description: Identifies the location of the source code within the workspace
       type: string
-      default: "/workspace/source-code/app"
+      default: "/workspace/source-code"
+      description: Identifies the location of the source code within the workspace
     - name: oc-deployment-template
       type: string
+      default: $(params.working-directory)/build/2201-vic-dev-template
       description: The file name for the deployment template
     - name: project-name
       type: string
+      default: vapo-demo
       description: Name of project
     - name: app-name
       type: string
+      default: vic
       description: Name of App. 
     - name: branch-name
       type: string
+      default: vapo
       description: Identifes the name of the branch
     - name: git-url
       type: string
+      default: https://github.com/department-of-veterans-affairs/vapo-vic.git
       description: Identifies the url path of the git repo. 
   steps:
     - name: deploying-stack

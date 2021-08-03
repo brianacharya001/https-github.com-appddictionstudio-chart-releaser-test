@@ -43,7 +43,7 @@ spec:
       description: Identifes the Trivy Image to use for scanning the OCI spec of the image
       default: quay.io/ksummersill2/trivy:0.17.2
     resources:
-    - name: source-code
+    - name: source
       type: git
       description: Identifies the Pipeline Resource to Clone the Source Code
   steps:
