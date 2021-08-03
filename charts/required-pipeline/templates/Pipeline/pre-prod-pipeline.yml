@@ -93,6 +93,10 @@ spec:
         name: 6-end-to-end-testing
       runAfter:
         - send-cve-report
+      resources:
+        inputs:
+        - name: source
+          resource: source-code
     # 7 - DAST Scanning
     - name: dast-scanning
       params:
