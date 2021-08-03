@@ -11,3 +11,11 @@ spec:
       image: quay.io/ksummersill2/ubuntu-wget:1.0.0
       script: |
         echo "End To End Testing Place Holder"
+    - name: mvn
+        # Image with chromeless browser
+      image: quay.io/vapo/cloudbuilder-mvn:v1.0.3
+      workingDir: /workspace/source
+      command: ["/usr/bin/mvn"]
+      args:
+        - -Dmaven.repo.local=$(workspaces.maven-repo.path)
+        - "$(inputs.params.GOALS)"
