@@ -6,8 +6,29 @@ metadata:
   annotations:
     app.kubernetes.io/managed-by: helm
 spec:
+  inputs:
+    params:
+    - name: working-directory
+      description: Identifies the location of the source code within the workspace
+      type: string
+      default: "/workspace/source-code/app"
+    - name: oc-deployment-template
+      type: string
+      description: The file name for the deployment template
+    - name: project-name
+      type: string
+      description: Name of project
+    - name: app-name
+      type: string
+      description: Name of App. 
+    - name: branch-name
+      type: string
+      description: Identifes the name of the branch
+    - name: git-url
+      type: string
+      description: Identifies the url path of the git repo. 
   steps:
     - name: deploying-stack
-      image: quay.io/ksummersill2/ubuntu-wget:1.0.0
+      image: quay.vapo.va.gov/vapo_tst_images/helm-oc-rocky:1.0.0
       script: |
-        echo "Deploying the Application"
+        oc new-app --template $(params.oc-deployment-template) -p BRANCH_NAME=$(params.branch-name) -p APP_GIT_URL=$(params.git-url) -p PROJECT_NAME=$(params.project-name) -p APP_NAME=$(params.app-name) 
