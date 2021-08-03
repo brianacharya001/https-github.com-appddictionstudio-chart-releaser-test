@@ -17,12 +17,7 @@ jobs:
           git config user.name "$GITHUB_ACTOR"
           git config user.email "$GITHUB_ACTOR@users.noreply.github.com"
       - name: Installing Chart Releaser
-        # uses: helm/chart-releaser-action@v1.0.0
+        uses: helm/chart-releaser-action@v1.0.0
         env:
           CR_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
           CR_OWNER: "ksummersill2"
-        run: |
-          curl --insecure -O https://github.com/helm/chart-releaser/releases/download/v1.2.1/chart-releaser_1.2.1_linux_amd64.tar.gz
-          ls
-          tar -xzf chart-releaser_1.2.1_linux_amd64.tar.gz
-          ls 
