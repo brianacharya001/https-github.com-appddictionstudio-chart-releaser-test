@@ -22,7 +22,6 @@ jobs:
           CR_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
           CR_OWNER: "ksummersill2"
         run: |
-          apt-get install curl groups:
           curl --insecure -O https://github.com/helm/chart-releaser/releases/download/v1.2.1/chart-releaser_1.2.1_linux_amd64.tar.gz
           tar -xvf chart-releaser_1.2.1_linux_amd64.tar.gz
           ls 
