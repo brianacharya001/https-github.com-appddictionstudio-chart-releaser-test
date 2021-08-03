@@ -48,9 +48,6 @@ spec:
         - sast-scanning
     # 4 - Build the Image and Scan via the OCI
     - name: build-image-scan-with-oci
-      params:
-      - name: pathToDockerFile
-        value: /build/2201-vic-dev
       taskRef:
         name: 4-buildah-task
       runAfter: 
