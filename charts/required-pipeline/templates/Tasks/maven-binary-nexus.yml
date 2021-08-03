@@ -42,6 +42,6 @@ spec:
       image: quay.io/ksummersill2/ubuntu-wget:1.0.1
       workingDir: $(params.working-directory)
       script: |
-        ls /workspace/app/target
-        curl -v -u admin:'#Newyear2065#' --upload-file /workspace/source-code/app/target/VIC.war http://nexus3-openshift-operators.apps.vapo-ppd.va.gov/repository/vic/1.0/development/VIC.war
+        ls /workspace/source/app/target
+        curl -v -u admin:'#Newyear2065#' --upload-file /workspace/source/app/target/VIC.war http://nexus3-openshift-operators.apps.vapo-ppd.va.gov/repository/vic/1.0/development/VIC.war
         echo "App Upload Complete"
