@@ -11,7 +11,7 @@ spec:
     - name: working-directory
       description: Identifies the location of the source code within the workspace
       type: string
-      default: "/workspace/source-code/app"
+      default: "/workspace/source/app"
     - name: target-directory
       description: Identifies the target directory
       type: string
@@ -43,5 +43,5 @@ spec:
       workingDir: $(params.working-directory)
       script: |
         ls /workspace/source-code/app/target
-        curl -v -u admin:4ca9c9e3-a593-4832-ba6a-f5c5336d1853 --upload-file /workspace/source-code/app/target/VIC.war http://nexus3-openshift-operators.apps.vapo-ppd.va.gov/repository/vic/1.0/development/VIC.war
+        curl -v -u admin:'#Newyear2065#' --upload-file /workspace/source-code/app/target/VIC.war http://nexus3-openshift-operators.apps.vapo-ppd.va.gov/repository/vic/1.0/development/VIC.war
         echo "App Upload Complete"
