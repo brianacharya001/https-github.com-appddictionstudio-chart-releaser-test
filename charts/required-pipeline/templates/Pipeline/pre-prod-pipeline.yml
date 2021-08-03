@@ -80,7 +80,8 @@ spec:
       taskRef:
         name: 5-cve-trivy-scanner
       runAfter:
-        - build-image-scan-with-oci
+        # - build-image-scan-with-oci
+        - build-image-with-kaniko
       resources:
         inputs:
         - name: image-source
