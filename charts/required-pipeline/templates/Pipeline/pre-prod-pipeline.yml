@@ -72,7 +72,7 @@ spec:
         - build-image-scan-with-oci
       resources:
         inputs:
-        - name: image-to-scan
+        - name: image-source
           resource: vapo-image-registry
     # 6 - End to End Testing
     - name: end-to-end-testing
