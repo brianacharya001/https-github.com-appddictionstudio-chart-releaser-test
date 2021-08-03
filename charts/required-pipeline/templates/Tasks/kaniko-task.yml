@@ -40,3 +40,4 @@ spec:
     - --dockerfile=$(params.WORKING_DIRECTORY)/$(params.DOCKERFILE_NAME)
     - --destination=$(params.TAG_IMAGE_NAME)
     - --context=$(params.WORKING_DIRECTORY)
+    - --skip-tls-verify
