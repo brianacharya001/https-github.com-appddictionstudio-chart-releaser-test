@@ -10,7 +10,7 @@ spec:
     params:
     - name: working-directory
       type: string
-      default: "/workspace/source-code"
+      default: "/workspace/source"
       description: Identifies the location of the source code within the workspace
     - name: oc-deployment-template
       type: string

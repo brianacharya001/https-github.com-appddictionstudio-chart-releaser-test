@@ -22,11 +22,11 @@ spec:
       default: registry.redhat.io/rhel8/buildah@sha256:180c4d9849b6ab0e5465d30d4f3a77765cf0d852ca1cb1efb59d6e8c9f90d467
     - name: BUILDAH_STORAGE_DRIVER
       description: "Buildah Storage Driver"
-      default: vfs
+      default: "vfs"
     - name: DOCKERFILE_NAME
       description: "Identifies the location and name of the dockerfile"
       type: string
-      default: "/docker/dev-vic-multi-stage"
+      default: "/build/2201-vic-dev-template"
     - name: DOCKER_CONTEXT_ROOT
       description: "Identifies the Docker context root location"
       type: "string"
