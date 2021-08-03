@@ -6,16 +6,26 @@ metadata:
   annotations:
     app.kubernetes.io/managed-by: helm
 spec:
+  inputs:
+    params:
+    - name: working-directory
+      description: Identifies the location of the source code within the workspace
+      type: string
+      default: "/workspace/source/app"
+    - name: build-goal
+      description: Identifies the test goal for maven
+      type: array
+      default: ["package"]
   steps:
     - name: end-to-end-testing
       image: quay.io/ksummersill2/ubuntu-wget:1.0.0
       script: |
         echo "End To End Testing Place Holder"
     - name: mvn
-        # Image with chromeless browser
+      # Image with chromeless browser
       image: quay.io/vapo/cloudbuilder-mvn:v1.0.3
-      workingDir: /workspace/source
+      workingDir: $(params.working-directory)
       command: ["/usr/bin/mvn"]
       args:
-        - -Dmaven.repo.local=$(workspaces.maven-repo.path)
-        - "$(inputs.params.GOALS)"
+        - -Dmaven.repo.local=$(params.working-directory)
+        - "$(inputs.params.build-goal)"
