@@ -24,11 +24,11 @@ spec:
       image: quay.io/ksummersill2/ubuntu-wget:1.0.0
       script: |
         echo "End To End Testing Place Holder"
-    - name: mvn
-      # Image with chromeless browser
-      image: quay.io/vapo/cloudbuilder-mvn:v1.0.3
-      workingDir: $(params.working-directory)
-      command: ["/usr/bin/mvn"]
-      args:
-        - -Dmaven.repo.local=$(params.working-directory)
-        - "$(inputs.params.build-goal)"
+    # - name: mvn
+    #   # Image with chromeless browser
+    #   image: quay.io/vapo/cloudbuilder-mvn:v1.0.3
+    #   workingDir: $(params.working-directory)
+    #   command: ["/usr/bin/mvn"]
+    #   args:
+    #     - -Dmaven.repo.local=$(params.working-directory)
+    #     - "$(inputs.params.build-goal)"
