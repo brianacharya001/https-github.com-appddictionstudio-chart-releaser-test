@@ -27,7 +27,7 @@ spec:
     - name: unit-testing
       params:
       taskRef: 
-        name: 1-unit-test-code-coverage
+        name: 1-unit-test-code-coverage-without-sonar
       resources:
         inputs:
         - name: source
