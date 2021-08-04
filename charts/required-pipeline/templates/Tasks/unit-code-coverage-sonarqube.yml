@@ -71,21 +71,21 @@ spec:
       args:
         - -Dmaven.repo.local=$(params.working-directory)
         - "$(inputs.params.test-goal)"
-    # - name: sonarqube-scan
-    #   image: $(params.sonarqube-image)
-    #   workingDir: $(params.working-directory)
-    #   env:
-    #     - name: SONAR_USER_HOME
-    #       value: $(params.working-directory)
-    #     - name: SONARQUBE_URL
-    #       value: $(params.sonarqube-endpoint)
-    #     - name: SONARQUBE_USER
-    #       value: "d04d5b3246a923898c2852e0ae11f1bc069530fa"
-    #     - name: SONARQUBE_PASSWORD
-    #       value: "admin"
-    #     - name: SONARQUBE_PROJECT_VERSION
-    #       value: "1.0.0"
-    #   script: |
-    #     APP_NAME=$(params.application-name)
-    #     SONARQUBE_JAVA_BINARIES_PATH="$(params.working-directory)/$(params.sonarqube-binary-path)"
-    #     sonar-scanner -X -Dsonar.login=${SONARQUBE_USER} -Dsonar.password=${SONARQUBE_PASSWORD} -Dsonar.host.url=${SONARQUBE_URL} -Dsonar.qualitygate.wait=true -Dsonar.scm.disabled=true
+    - name: sonarqube-scan
+      image: $(params.sonarqube-image)
+      workingDir: $(params.working-directory)
+      env:
+        - name: SONAR_USER_HOME
+          value: $(params.working-directory)
+        - name: SONARQUBE_URL
+          value: $(params.sonarqube-endpoint)
+        - name: SONARQUBE_USER
+          value: "d04d5b3246a923898c2852e0ae11f1bc069530fa"
+        - name: SONARQUBE_PASSWORD
+          value: "admin"
+        - name: SONARQUBE_PROJECT_VERSION
+          value: "1.0.0"
+      script: |
+        APP_NAME=$(params.application-name)
+        SONARQUBE_JAVA_BINARIES_PATH="$(params.working-directory)/$(params.sonarqube-binary-path)"
+        sonar-scanner -X -Dsonar.login=${SONARQUBE_USER} -Dsonar.password=${SONARQUBE_PASSWORD} -Dsonar.host.url=${SONARQUBE_URL} -Dsonar.qualitygate.wait=true -Dsonar.scm.disabled=true

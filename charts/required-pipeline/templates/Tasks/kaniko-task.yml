@@ -1,0 +1,43 @@
+apiVersion: tekton.dev/v1alpha1
+kind: Task
+metadata:
+  name: 4-kaniko-task
+  namespace: vapo-demo
+  annotations:
+    app.kubernetes.io/managed-by: helm
+spec:
+  inputs:
+    params:
+    - name: WORKING_DIRECTORY
+      description: Identifies the location of the source code within the workspace
+      type: "string"
+      default: "/workspace/source"
+    - name: DOCKERFILE_NAME
+      description: "Identifies the location and name of the dockerfile"
+      type: string
+      default: "/build/2201-vic-dev"
+    - name: DOCKER_CONTEXT_ROOT
+      description: "Identifies the Docker context root location"
+      type: "string"
+      default: .
+    - name: TAG_IMAGE_NAME
+      description: "Identifies the destination image location and tag"
+      type: string
+      default: "quay.vapo.va.gov/vic-dev/dev:1.0.0"
+    # Identifies the Pipeline Resource to Clone the Source Code
+    resources:
+    - name: source
+      type: git
+  steps:
+  - name: build-and-push
+    image: gcr.io/kaniko-project/executor:v0.16.0
+    env:
+    - name: "DOCKER_CONFIG"
+      value: "/tekton/home/.docker/"
+    command:
+    - /kaniko/executor
+    args:
+    - --dockerfile=$(params.WORKING_DIRECTORY)/$(params.DOCKERFILE_NAME)
+    - --destination=$(params.TAG_IMAGE_NAME)
+    - --context=$(params.WORKING_DIRECTORY)
+    - --skip-tls-verify

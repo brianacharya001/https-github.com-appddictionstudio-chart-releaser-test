@@ -1,0 +1,53 @@
+apiVersion: tekton.dev/v1alpha1
+kind: Task
+metadata:
+  name: 1-unit-test-code-coverage-without-sonar
+  namespace: vapo-demo
+  annotations:
+    app.kubernetes.io/managed-by: helm
+spec:
+  inputs:
+    params:
+    - name: application-name
+      description: Name of Application
+      type: string
+      default: "VIC"
+    - name: build-goal
+      description: Identifies the build goal for maven
+      type: array
+      default: ["package"]
+    - name: test-goal
+      description: Identifies the test goal for maven
+      type: array
+      default: ["test"]
+    - name: maven-image
+      description: Identifies the Maven Image Used to Compile Code
+      type: string
+      default: quay.io/ksummersill2/maven:1.0.0
+    - name: working-directory
+      description: Identifies the location of the source code within the workspace
+      type: string
+      default: "/workspace/source/app"
+    resources:
+    - name: source
+      type: git
+      description: Identifies the Pipeline Resource to Clone the Source Code
+  steps:
+    - name: maven-build
+      image: $(params.maven-image)
+      workingDir: $(params.working-directory)
+      command: ["/usr/bin/mvn"]
+      args:
+        - -Dmaven.repo.local=$(params.working-directory)
+        - "$(inputs.params.test-goal)"
+    - name: verify-binaries
+      image: $(params.maven-image)
+      script: |
+        ls $(params.working-directory)/target
+    - name: maven-test
+      image: $(params.maven-image)
+      workingDir: $(params.working-directory)
+      command: ["/usr/bin/mvn"]
+      args:
+        - -Dmaven.repo.local=$(params.working-directory)
+        - "$(inputs.params.test-goal)"

@@ -1,7 +1,7 @@
 apiVersion: tekton.dev/v1beta1
 kind: Pipeline
 metadata:
-  name: pre-prod-pipeline
+  name: dev-maven-pipeline
   # Identify the Product Team Namespace within the PaaS
   namespace: vapo-demo
   annotations:
@@ -32,36 +32,17 @@ spec:
         inputs:
         - name: source
           resource: source-code
-    # 2 - SAST Scanning the Code
-    - name: sast-scanning
-      params:
-      taskRef:
-        name: 2-sast
-      runAfter: 
-        - unit-testing
     # 3 - Compile Binaries and Artifacts to Nexus
     - name: compile-to-nexus
       params:
       taskRef:
         name: 3-compile-and-send-2-nexus
       runAfter: 
-        - sast-scanning
+        - unit-testing
       resources:
         inputs:
         - name: source
           resource: source-code
-    # 4a - Build the Image and Scan via the OCI
-    # - name: build-image-scan-with-oci
-    #   params:
-    #   taskRef:
-    #     name: 4-buildah-task
-    #   runAfter: 
-    #     - compile-to-nexus
-    #   resources:
-    #     inputs:
-    #     - name: source
-    #       resource: source-code
-    # 4b - Build the Image with Kaniko as an Alternative to Buildah
     - name: build-image-with-kaniko
       params:
       taskRef:
@@ -97,17 +78,10 @@ spec:
         inputs:
         - name: source
           resource: source-code
-    # 7 - DAST Scanning
-    - name: dast-scanning
-      params:
-      taskRef: 
-        name: 7-dast-scanning
-      runAfter:
-        - end-to-end-testing
     # 8 - Deploy the Stack to Environment
     - name: deploy-stack
       params:
       taskRef:
         name: 8-deployment
       runAfter:
-        - dast-scanning
+        - end-to-end-testing
