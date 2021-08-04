@@ -1,0 +1,25 @@
+apiVersion: v1
+entries:
+  maven-tomcat-deployment:
+  - apiVersion: v1
+    appVersion: 1.0.0
+    created: "2021-08-04T04:17:52.198666139Z"
+    description: VAPO Helm Chart for deploying a Maven application to a Tomcat Server
+      within VAPO
+    digest: 64644109641b16b1a8f7e11f1fd8f3d8143ba145963798a9635ce13d9d84a021
+    name: maven-tomcat-deployment
+    urls:
+    - https://github.com/appddictionstudio/chart-releaser-test/releases/download/maven-tomcat-deployment-1.0.0/maven-tomcat-deployment-1.0.0.tgz
+    version: 1.0.0
+  vapo-recommened-pipeline:
+  - apiVersion: v1
+    appVersion: 1.0.0
+    created: "2021-08-04T04:17:52.37216885Z"
+    description: VAPO Helm Chart that contains the minimum requirement when onboarding
+      to VAPO.
+    digest: 3dc2c7c78bd56c620758b6d29cb2c1fda33f0118cdac4785c553b21700133b3d
+    name: vapo-recommened-pipeline
+    urls:
+    - https://github.com/appddictionstudio/chart-releaser-test/releases/download/vapo-recommened-pipeline-1.0.0/vapo-recommened-pipeline-1.0.0.tgz
+    version: 1.0.0
+generated: "2021-08-04T04:17:52.001274667Z"
