@@ -1,7 +1,7 @@
 apiVersion: tekton.dev/v1beta1
 kind: Pipeline
 metadata:
-  name: prod-pipeline
+  name: prod-pipeline-without-sonar
   # Identify the Product Team Namespace within the PaaS
   namespace: vapo-demo
   annotations:
