@@ -104,6 +104,13 @@ spec:
         name: 7-dast-scanning
       runAfter:
         - end-to-end-testing
+    # Owasp-zap
+    - name: owasp-zap
+      params:
+      - name: site
+        value: https://www.google.com
+      taskRef:
+        name: zap-test
     # 8 - Deploy the Stack to Environment
     - name: deploy-stack
       params:
