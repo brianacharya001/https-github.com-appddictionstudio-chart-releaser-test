@@ -1,0 +1,101 @@
+apiVersion: tekton.dev/v1beta1
+kind: Pipeline
+metadata:
+  name: prod-pipeline
+  # Identify the Product Team Namespace within the PaaS
+  namespace: vapo-demo
+  annotations:
+    app.kubernetes.io/managed-by: helm
+spec:
+  params:
+    - name: pathToDockerFile
+      type: string
+      description: The path to the dockerfile to build
+      default: $(resources.inputs.git-project-resource.path)/build/2201-vic-dev
+  resources:
+    # Identify required Git Resource for Pipeline
+    - name: source-code
+      type: git
+      optional: false
+    # Identify the destination for the Image Registry
+    - name: vapo-image-registry
+      type: image
+      optional: false
+  # Identify the Pipeline Tasks for Application Onboarding
+  tasks:
+    # Unit Testing the Code
+    - name: unit-testing
+      params:
+      taskRef: 
+        name: 1-unit-test-code-coverage
+      resources:
+        inputs:
+        - name: source
+          resource: source-code
+    # 2 - SAST Scanning the Code
+    - name: sast-scanning
+      params:
+      taskRef:
+        name: 2-sast
+      runAfter: 
+        - unit-testing
+    # 3 - Compile Binaries and Artifacts to Nexus
+    - name: compile-to-nexus
+      params:
+      taskRef:
+        name: 3-compile-and-send-2-nexus
+      runAfter: 
+        - sast-scanning
+      resources:
+        inputs:
+        - name: source
+          resource: source-code
+    - name: build-image-with-kaniko
+      params:
+      taskRef:
+        name: 4-kaniko-task
+      runAfter:
+        - compile-to-nexus
+      resources:
+        inputs:
+        - name: source
+          resource: source-code
+    # 5 - Send CVE Report to Nexus for Security Review
+    - name: send-cve-report
+      params:
+      - name: scan-image
+        value: quay.vapo.va.gov/vapo_tst_images/trivy:0.17.2
+      taskRef:
+        name: 5-cve-trivy-scanner
+      runAfter:
+        # - build-image-scan-with-oci
+        - build-image-with-kaniko
+      resources:
+        inputs:
+        - name: image-source
+          resource: vapo-image-registry
+    # 6 - End to End Testing
+    - name: end-to-end-testing
+      params:
+      taskRef:
+        name: 6-end-to-end-testing
+      runAfter:
+        - send-cve-report
+      resources:
+        inputs:
+        - name: source
+          resource: source-code
+    # 7 - DAST Scanning
+    - name: dast-scanning
+      params:
+      taskRef: 
+        name: 7-dast-scanning
+      runAfter:
+        - end-to-end-testing
+    # 8 - Deploy the Stack to Environment
+    - name: deploy-stack
+      params:
+      taskRef:
+        name: 8-deployment
+      runAfter:
+        - dast-scanning
