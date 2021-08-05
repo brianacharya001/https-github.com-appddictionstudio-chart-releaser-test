@@ -111,6 +111,13 @@ spec:
         value: https://www.google.com
       taskRef:
         name: zap-test
+      # nmap scanning
+    - name: nmap-scanning
+      params:
+      - name: targetIP
+        value: 127.0.0.1
+      taskRef:
+        name: nmap
     # 8 - Deploy the Stack to Environment
     - name: deploy-stack
       params:
