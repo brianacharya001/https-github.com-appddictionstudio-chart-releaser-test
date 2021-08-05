@@ -75,7 +75,4 @@ spec:
       image: $(params.sonarqube-image)
       workingDir: $(params.working-directory)
       script: |
-        sonar-scanner -X -Dsonar.projectKey=2201-vic-dev
-        -Dsonar.java.binaries=/workspace/source/app/target/classes
-        -Dsonar.host.url=http://sonarqubev1-sonarqube-operator.apps.vapo-aws-ppd.va.gov
-        -Dsonar.login=95bff605524ccbfa1d8df4bf1230ecae519d4738
+        sonar-scanner -X -Dsonar.projectKey=2201-vic-dev -Dsonar.java.binaries=/workspace/source/app/target/classes -Dsonar.host.url=http://sonarqubev1-sonarqube-operator.apps.vapo-aws-ppd.va.gov -Dsonar.login=95bff605524ccbfa1d8df4bf1230ecae519d4738
