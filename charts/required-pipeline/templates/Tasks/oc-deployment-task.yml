@@ -36,6 +36,5 @@ spec:
     - name: deploying-stack
       image: quay.vapo.va.gov/vapo_tst_images/helm-oc-rocky:1.0.0
       script: |
-        mv oc /usr/bin
         oc version
-        oc new-app --template $(params.oc-deployment-template) -p BRANCH_NAME=$(params.branch-name) -p APP_GIT_URL=$(params.git-url) -p PROJECT_NAME=$(params.project-name) -p APP_NAME=$(params.app-name) 
+        oc new-app --file=/workspace/source/build/2201-vic-dev-template
