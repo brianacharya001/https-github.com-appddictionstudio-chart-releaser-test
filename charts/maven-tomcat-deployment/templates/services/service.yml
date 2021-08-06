@@ -1,11 +1,11 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: va-app-service
   namespace: vapo-demo
+  name: vic-service
 spec:
   selector:
-    app: va-app
+    app: vic-frontend
   ports:
     - protocol: TCP
       port: 443
