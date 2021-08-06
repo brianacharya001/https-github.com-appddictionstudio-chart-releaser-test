@@ -37,4 +37,4 @@ spec:
       image: quay.vapo.va.gov/vapo_tst_images/helm-oc-rocky:1.0.0
       script: |
         oc version
-        oc new-app --file=/workspace/source/build/2201-vic-dev-template
+        oc apply -f /workspace/source/build/2201-vic-dev-template

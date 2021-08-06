@@ -1,0 +1,15 @@
+apiVersion: networking.k8s.io/v1beta1
+kind: Ingress
+metadata:
+  name: vic-ingress
+  namespace: vapo-demo
+spec:
+  rules:
+    - host: vic-route-vapo-demo.apps.vapo-aws-ppd.va.gov
+      http:
+        paths:
+          - path: /VIC
+            pathType: ImplementationSpecific
+            backend:
+              serviceName: vic-service
+              servicePort: 443

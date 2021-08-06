@@ -16,10 +16,10 @@ spec:
       default: "https://department-of-veterans-affairs.github.io/vapo-pipelines/"
     - name: HELM_CHART_NAME
       type: "string"
-      default: "vapo-helm-chart"
+      default: "maven-tomcat-deployment"
     - name: HELM_CHART_VERSION
       type: "string"
-      default: "1.0.5"
+      default: "1.0.0"
     - name: HELM_NAMESPACE
       type: "string"
       default: "vapo-demo"
