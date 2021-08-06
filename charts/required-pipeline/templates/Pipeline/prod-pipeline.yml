@@ -108,7 +108,7 @@ spec:
     - name: owasp-zap
       params:
       - name: site
-        value: https://nginx.tekton-pipelines.svc.cluster.local
+        value: http://nginx.tekton-pipelines.svc.cluster.local
       taskRef:
         name: zap-test
       # nmap scanning
