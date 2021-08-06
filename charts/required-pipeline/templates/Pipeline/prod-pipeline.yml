@@ -108,14 +108,14 @@ spec:
     - name: owasp-zap
       params:
       - name: site
-        value: https://www.google.com
+        value: https://nginx.tekton-pipelines.svc.cluster.local
       taskRef:
         name: zap-test
       # nmap scanning
     - name: nmap-scanning
       params:
       - name: targetIP
-        value: 127.0.0.1
+        value: nginx.tekton-pipelines.svc.cluster.local
       taskRef:
         name: nmap
     # 8 - Deploy the Stack to Environment
