@@ -1,0 +1,29 @@
+apiVersion: tekton.dev/v1alpha1
+kind: Task
+metadata:
+  name: owasp-zap
+spec:
+  workspaces:
+    - name: local-maven-repo
+      description: |
+        The folder where the output of the script run is saved
+      mountPath: /zap/wrk
+  inputs: 
+    params:
+    - name: site
+      type: string
+      description: Site we are targeting
+      default: "site url"
+    - name: strength
+      type: string
+      description: Attack strength, default is MEDIUM, it can be Low, Medium, High or Insane
+      default: "-config scanner.strength=MEDIUM -config scanner.threshold=MEDIUM"
+    - name: path
+      type: string
+      description: Path of the pvc
+      default: "/zap/wrk/"
+  steps:
+  - name: zap-test
+    image: quay.io/vapo/owasp-zap:v1.0.0
+    script: |
+      zap-full-scan.py -t $(inputs.params.site) -r $(inputs.params.path)testreport.html -d -z "$(inputs.params.strength)"

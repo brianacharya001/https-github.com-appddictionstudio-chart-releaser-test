@@ -1,0 +1,27 @@
+apiVersion: tekton.dev/v1alpha1
+kind: Task
+metadata:
+  name: nmap
+spec:
+  inputs: 
+    params:
+    - name: targetIP
+      type: string
+      description: host IP we are targeting
+      default: "127.0.0.1"
+  steps:
+  - name: nmap-test
+    image: quay.io/ksummersill2/ubuntu-wget:1.0.0
+    script: |
+      mkdir -p /nmap/home/
+      echo "Install nmap"
+      apt-get install sudo
+      apt-get install nmap -y
+      nmap $(inputs.params.targetIP) && \
+      sudo nmap $(inputs.params.targetIP) -O && \
+      nmap $(inputs.params.targetIP) -sT && \
+      nmap $(inputs.params.targetIP) -p http,https && \
+      nmap $(inputs.params.targetIP) -sL && \
+      nmap $(inputs.params.targetIP) -sV && \
+      sudo nmap $(inputs.params.targetIP) -f -oX /nmap/home/dast-report.xml
+      cat /nmap/home/dast-report.xml

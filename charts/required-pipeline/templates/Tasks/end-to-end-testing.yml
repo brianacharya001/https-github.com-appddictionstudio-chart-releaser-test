@@ -20,6 +20,14 @@ spec:
     - name: source
       type: git
   steps:
+    workspaces:
+  - name: maven-repo
+  inputs:
+    params:
+    - name: GOALS
+      description: The Maven goals to run
+      type: array
+      default: ["package"]
     - name: end-to-end-testing
       image: quay.io/ksummersill2/ubuntu-wget:1.0.0
       script: |
