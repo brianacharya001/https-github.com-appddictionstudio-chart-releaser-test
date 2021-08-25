@@ -36,4 +36,4 @@ spec:
         /zap/wrk/testreport.html
         http://nexus3-openshift-operators.apps.vapo-ppd.va.gov/repository/vic/1.0/cve-scans/testreport.html
 
-        echo "CVE Upload Complete"
+        echo "nmap report Upload Complete"
