@@ -37,3 +37,13 @@ spec:
         http://nexus3-openshift-operators.apps.vapo-ppd.va.gov/repository/vic/1.0/cve-scans/testreport.html
 
         echo "nmap report Upload Complete"
+       
+      ### below is the taskrun ref for owazp with parameters#### 
+#      - name: dast-scanning
+#       params:
+#       -name: site
+#        value: http://servicename.namespace.svc.cluster.local
+#       taskRef: 
+#         name: 7-dast-scanning-owasp-zap
+#       runAfter:
+#         - end-to-end-testing
