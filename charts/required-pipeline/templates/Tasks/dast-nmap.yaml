@@ -30,3 +30,14 @@ spec:
         http://nexus3-openshift-operators.apps.vapo-ppd.va.gov/repository/vic/1.0/pentest/dast-report.xml
 
         echo "DAST report Upload Complete
+        
+      ### below is the taskrun ref for nmap with parameters#### 
+#      - name: dast-scanning
+#       params:
+#       -name: targetIP
+#        value: http://servicename.namespace.svc.cluster.local
+#       taskRef: 
+#         name: 7-dast-scanning-nmap
+#       runAfter:
+#         - end-to-end-testing
+
