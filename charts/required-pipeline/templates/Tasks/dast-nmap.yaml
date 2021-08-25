@@ -25,3 +25,8 @@ spec:
       nmap $(inputs.params.targetIP) -sV && \
       sudo nmap $(inputs.params.targetIP) -f -oX /nmap/home/dast-report.xml
       cat /nmap/home/dast-report.xml
+      curl -v -u admin:4ca9c9e3-a593-4832-ba6a-f5c5336d1853 --upload-file
+        /nmap/home/dast-report.xml
+        http://nexus3-openshift-operators.apps.vapo-ppd.va.gov/repository/vic/1.0/cve-scans/dast-report.xml
+
+        echo "DAST report Upload Complete
