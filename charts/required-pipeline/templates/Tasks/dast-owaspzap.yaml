@@ -27,3 +27,13 @@ spec:
     image: quay.io/vapo/owasp-zap:v1.0.0
     script: |
       zap-full-scan.py -t $(inputs.params.site) -r $(inputs.params.path)testreport.html -d -z "$(inputs.params.strength)"
+      cat /zap/wrk/testreport.html
+    - image: 'quay.io/ksummersill2/ubuntu-wget:1.0.1'
+      name: nexus-3-zap-scan-report
+      resources: {}
+      script: >
+        curl -v -u admin:4ca9c9e3-a593-4832-ba6a-f5c5336d1853 --upload-file
+        /zap/wrk/testreport.html
+        http://nexus3-openshift-operators.apps.vapo-ppd.va.gov/repository/vic/1.0/cve-scans/testreport.html
+
+        echo "CVE Upload Complete"
