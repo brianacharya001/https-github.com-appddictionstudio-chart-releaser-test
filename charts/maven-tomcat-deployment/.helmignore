@@ -1,0 +1,5 @@
+/templates/deployment
+/templates/ingress
+/templates/routes
+/templates/secrets
+/templates/services

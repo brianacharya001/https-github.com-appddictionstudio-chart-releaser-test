@@ -1,13 +1,13 @@
 apiVersion: tekton.dev/v1alpha1
 kind: Task
 metadata:
-  name: 2-sast
-  namespace: vapo-demo
+  name: 7-dast-scanning
+  namespace: {{ .Values.Pipeline.Namespace }}
   annotations:
     app.kubernetes.io/managed-by: helm
 spec:
   steps:
-    - name: scanning-code
+    - name: dast-scanning-container
       image: quay.io/ksummersill2/ubuntu-wget:1.0.0
       script: |
-        echo "Place Holder for SAST Scanning"
+        echo "Scanning the Application for Runtime issues"

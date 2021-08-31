@@ -1,0 +1,8 @@
+Pipeline:
+  Namespace: vapo
+
+PipelineResource:
+  mainSourceCode: https://github.com/department-of-veterans-affairs/vapo-vic.git
+  mainBranch: vapo
+  sslVerify: false
+  imageRepositoryLocation: quay.vapo.va.gov/vic-dev/dev:1.0.0

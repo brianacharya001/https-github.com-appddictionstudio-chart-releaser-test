@@ -1,9 +1,9 @@
 apiVersion: tekton.dev/v1beta1
 kind: Pipeline
 metadata:
-  name: prod-pipeline
+  name: test-pipeline
   # Identify the Product Team Namespace within the PaaS
-  namespace: vapo-demo
+  namespace: {{ .Values.Pipeline.Namespace }}
   annotations:
     app.kubernetes.io/managed-by: helm
 spec:
@@ -104,20 +104,6 @@ spec:
         name: 7-dast-scanning
       runAfter:
         - end-to-end-testing
-    # Owasp-zap
-    - name: owasp-zap
-      params:
-      - name: site
-        value: http://nginx.tekton-pipelines.svc.cluster.local
-      taskRef:
-        name: zap-test
-      # nmap scanning
-    - name: nmap-scanning
-      params:
-      - name: targetIP
-        value: nginx.tekton-pipelines.svc.cluster.local
-      taskRef:
-        name: nmap
     # 8 - Deploy the Stack to Environment
     - name: deploy-stack
       params:

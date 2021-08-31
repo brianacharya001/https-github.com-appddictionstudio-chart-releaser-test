@@ -1,9 +1,9 @@
 apiVersion: tekton.dev/v1beta1
 kind: Pipeline
 metadata:
-  name: prod-pipeline-without-sonar
+  name: pre-prod-pipeline
   # Identify the Product Team Namespace within the PaaS
-  namespace: vapo-demo
+  namespace: {{ .Values.Pipeline.Namespace }}
   annotations:
     app.kubernetes.io/managed-by: helm
 spec:
@@ -27,7 +27,7 @@ spec:
     - name: unit-testing
       params:
       taskRef: 
-        name: 1-unit-test-code-coverage-without-sonar
+        name: 1-unit-test-code-coverage
       resources:
         inputs:
         - name: source
@@ -50,6 +50,18 @@ spec:
         inputs:
         - name: source
           resource: source-code
+    # 4a - Build the Image and Scan via the OCI
+    # - name: build-image-scan-with-oci
+    #   params:
+    #   taskRef:
+    #     name: 4-buildah-task
+    #   runAfter: 
+    #     - compile-to-nexus
+    #   resources:
+    #     inputs:
+    #     - name: source
+    #       resource: source-code
+    # 4b - Build the Image with Kaniko as an Alternative to Buildah
     - name: build-image-with-kaniko
       params:
       taskRef:

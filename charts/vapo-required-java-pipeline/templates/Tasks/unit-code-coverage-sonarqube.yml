@@ -1,8 +1,8 @@
 apiVersion: tekton.dev/v1alpha1
 kind: Task
 metadata:
-  name: 1-unit-test-code-coverage-without-sonar
-  namespace: vapo-demo
+  name: 1-unit-test-code-coverage
+  namespace: {{ .Values.Pipeline.Namespace }}
   annotations:
     app.kubernetes.io/managed-by: helm
 spec:
@@ -28,11 +28,31 @@ spec:
       description: Identifies the location of the source code within the workspace
       type: string
       default: "/workspace/source/app"
+    - name: sonarqube-image
+      description: Identifies the sonarqube image used to execute the coverage
+      type: string
+      default: quay.io/ibmgaragecloud/sonarsource-sonar-scanner-cli
+    - name: sonarqube-binary-path
+      description: Identifies the path where the binaries are location within the workspace
+      type: string
+      default: target
+    - name: sonarqube-endpoint
+      description: Location of SonarQube
+      type: string
+      default: "https://sonarqube-sonarqube-operator.apps.vapo-aws-ppd.va.gov/"
     resources:
     - name: source
       type: git
       description: Identifies the Pipeline Resource to Clone the Source Code
   steps:
+    - name: verify-sonarqube-location
+      image: $(params.maven-image)
+      script: |
+        #!/usr/bin/env bash
+        
+        curl $(params.sonarqube-endpoint) --insecure 
+        
+        ls $(params.working-directory)
     - name: maven-build
       image: $(params.maven-image)
       workingDir: $(params.working-directory)
@@ -51,3 +71,8 @@ spec:
       args:
         - -Dmaven.repo.local=$(params.working-directory)
         - "$(inputs.params.test-goal)"
+    - name: sonarqube-scan
+      image: $(params.sonarqube-image)
+      workingDir: $(params.working-directory)
+      script: |
+        sonar-scanner -X -Dsonar.projectKey=2201-vic-dev -Dsonar.java.binaries=/workspace/source/app/target/classes -Dsonar.host.url=http://sonarqubev1-sonarqube-operator.apps.vapo-aws-ppd.va.gov -Dsonar.login=95bff605524ccbfa1d8df4bf1230ecae519d4738
