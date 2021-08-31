@@ -9,5 +9,5 @@ subjects:
   namespace: vapo
 roleRef:
   kind: Role
-  name: get-pods
+  name: pipeline-role
   apiGroup: rbac.authorization.k8s.io
