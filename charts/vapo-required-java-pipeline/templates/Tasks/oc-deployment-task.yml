@@ -18,7 +18,7 @@ spec:
       description: The file name for the deployment template
     - name: project-name
       type: string
-      default: vapo-demo
+      default: {{ .Values.Pipeline.Namespace }}
       description: Name of project
     - name: app-name
       type: string
