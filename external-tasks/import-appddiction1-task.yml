@@ -1,0 +1,32 @@
+apiVersion: tekton.dev/v1alpha1
+kind: Task
+metadata:
+  name: helm-pipeline-deployer-task
+  namespace: vapo
+spec:
+  inputs:
+    params:
+    - name: HELM_IMAGE
+      type: "string"
+      default: "quay.io/ksummersill2/helm-oc-rocky:1.0.0"
+    - name: VAPO_PIPELINE_REPO
+      type: "string"
+      default: "https://department-of-veterans-affairs.github.io/vapo-pipelines/"
+    - name: HELM_CHART_NAME
+      type: "string"
+      default: "vapo-helm-chart"
+    - name: HELM_CHART_VERSION
+      type: "string"
+      default: "1.0.5"
+    - name: HELM_NAMESPACE
+      type: "string"
+      default: "vapo"
+    - name: HELM_VERSION
+      type: "string"
+      default: "1.0.0"
+  steps:
+  - name: deploy-pipeline
+    image: $(params.HELM_IMAGE)
+    script: |
+      helm version
+      helm upgrade $(params.HELM_VERSION) $(params.HELM_CHART_NAME) --insecure-skip-tls-verify --install --namespace $(params.HELM_NAMESPACE) --version $(params.HELM_CHART_VERSION) --repo $(params.VAPO_PIPELINE_REPO)

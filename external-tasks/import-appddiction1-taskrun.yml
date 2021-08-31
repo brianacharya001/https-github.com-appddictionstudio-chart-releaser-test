@@ -1,0 +1,23 @@
+apiVersion: tekton.dev/v1beta1
+kind: TaskRun
+metadata:
+  name: helm-pipeline-deployer
+  namespace: vapo
+spec:
+  # serviceAccountName: pipeline
+  serviceAccountName: vapo-tekton-resources-service-account
+  params:
+  - name: HELM_IMAGE
+    value: "quay.io/ksummersill2/helm-oc-rocky:1.0.0"
+  - name: VAPO_PIPELINE_REPO
+    value: "https://appddictionstudio.github.io/chart-releaser-test/"
+  - name: HELM_CHART_NAME
+    value: "vapo-recommened-pipeline"
+  - name: HELM_CHART_VERSION
+    value: "1.0.0"
+  - name: HELM_NAMESPACE
+    value: "vapo"
+  - name: HELM_VERSION
+    value: "1.0.0"
+  taskRef:
+    name: helm-pipeline-deployer-task

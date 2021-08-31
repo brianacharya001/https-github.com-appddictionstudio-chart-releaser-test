@@ -1,0 +1,13 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: kubectl-role-binding
+  namespace: vapo
+subjects:
+- kind: ServiceAccount
+  name: vapo-tekton-resources-service-account
+  namespace: vapo
+roleRef:
+  kind: Role
+  name: get-pods
+  apiGroup: rbac.authorization.k8s.io
