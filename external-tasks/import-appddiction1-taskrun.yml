@@ -12,7 +12,7 @@ spec:
   - name: VAPO_PIPELINE_REPO
     value: "https://appddictionstudio.github.io/chart-releaser-test/"
   - name: HELM_CHART_NAME
-    value: "vapo-recommened-pipeline"
+    value: "vapo-required-java-pipeline"
   - name: HELM_CHART_VERSION
     value: "1.0.0"
   - name: HELM_NAMESPACE
