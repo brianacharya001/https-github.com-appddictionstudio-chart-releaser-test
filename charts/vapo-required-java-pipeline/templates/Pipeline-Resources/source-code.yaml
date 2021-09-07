@@ -13,4 +13,4 @@ spec:
   - name: revision
     value: {{ .Values.PipelineResource.mainBranch }}
   - name: sslVerify
-    value: {{ .Values.PipelineResource.sslVerify }}
+    value: false
