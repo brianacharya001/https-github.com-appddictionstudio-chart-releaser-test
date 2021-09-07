@@ -1,5 +1,5 @@
 Pipeline:
-  Namespace: 2201-vapo-dev
+  Namespace: xxxx-vapo-trng
 
 PipelineResource:
   mainSourceCode: https://github.com/department-of-veterans-affairs/vapo-vic.git
