@@ -1,97 +1,139 @@
-apiVersion: tekton.dev/v1alpha1
+apiVersion: tekton.dev/v1beta1
 kind: Task
 metadata:
   name: 4-buildah-task
-  namespace: {{ .Values.Pipeline.Namespace }}
-  annotations:
-    app.kubernetes.io/managed-by: helm
+  namespace: xxxx-vapo-trng
 spec:
-  inputs:
-    params:
-    - name: VAPO_QUAY_TLSVERIFY
-      description: "Identifies weather or not to use TLS for the VAPO Quay"
+  params:
+    - default: 'false'
+      description: Identifies weather or not to use TLS for the VAPO Quay
+      name: VAPO_QUAY_TLSVERIFY
       type: string
-      default: "false"
-    - name: TAG_IMAGE_NAME
-      description: "Identifies the destination image location and tag"
+    - default: 'quay.vapo.va.gov/vic-dev/dev:1.0.0'
+      description: Identifies the destination image location and tag
+      name: TAG_IMAGE_NAME
       type: string
-      default: "quay.vapo.va.gov/vic-dev/dev:1.0.0"
-    - name: BUILDAH_IMAGE
-      description: "Identifies the Buildah Image"
+    - default: Add Image Repository
+      description: Identifies the Base Images
+      name: IMAGE_BASE
       type: string
-      default: registry.redhat.io/rhel8/buildah@sha256:180c4d9849b6ab0e5465d30d4f3a77765cf0d852ca1cb1efb59d6e8c9f90d467
-    - name: BUILDAH_STORAGE_DRIVER
-      description: "Buildah Storage Driver"
-      default: "vfs"
-    - name: DOCKERFILE_NAME
-      description: "Identifies the location and name of the dockerfile"
+    - default: Add Image Name
+      description: Identifies the Image Name
+      name: IMAGE_NAME
       type: string
-      default: "/build/2201-vic-dev-template"
-    - name: DOCKER_CONTEXT_ROOT
-      description: "Identifies the Docker context root location"
-      type: "string"
-      default: .
-    - name: STANDARD_IMAGE_FORMAT
-      type: "string"
-      # Open Container Initiative format set to default
-      default: "oci"
-    - name: WORKING_DIRECTORY
+    - default: 1.0.0
+      description: The tag for the image
+      name: IMAGE_TAG
+      type: string
+    - default: >-
+        registry.redhat.io/rhel8/buildah@sha256:180c4d9849b6ab0e5465d30d4f3a77765cf0d852ca1cb1efb59d6e8c9f90d467
+      description: Identifies the Buildah Image
+      name: BUILDAH_IMAGE
+      type: string
+    - default: vfs
+      description: Buildah Storage Driver
+      name: BUILDAH_STORAGE_DRIVER
+      type: string
+    - default: /build/<docker-filename>
+      description: Identifies the location and name of the dockerfile
+      name: DOCKERFILE_NAME
+      type: string
+    - default: .
+      description: Identifies the Docker context root location
+      name: DOCKER_CONTEXT_ROOT
+      type: string
+    - default: oci
+      name: STANDARD_IMAGE_FORMAT
+      type: string
+    - default: /workspace/<repository git pipeline resource name>
       description: Identifies the location of the source code within the workspace
-      type: "string"
-      default: "/workspace/source"
-    - name: TRIVY_IMAGE
+      name: WORKING_DIRECTORY
+      type: string
+    - default: 'quay.io/ksummersill2/trivy:0.17.2'
       description: Identifes the Trivy Image to use for scanning the OCI spec of the image
-      default: quay.io/ksummersill2/trivy:0.17.2
-    resources:
-    - name: source
-      type: git
-      description: Identifies the Pipeline Resource to Clone the Source Code
+      name: TRIVY_IMAGE
+      type: string
+    - default: '0'
+      description: Identifies if Trivy should stop the pipeline
+      name: EXIT_CODE
+      type: string
+    - default: 'os,library'
+      description: Identifies the types of vunerbilities
+      name: VUL_TYPE
+      type: string
+    - default: 'HIGH,CRITICAL'
+      description: Identifies the severity level for the trivy scan
+      name: SEVERITY_LVL
+      type: string
+  resources:
+    inputs:
+      - description: Identifies the Pipeline Resource to Clone the Source Code
+        name: source
+        type: git
   steps:
-  - name: build-image
-    image: $(params.BUILDAH_IMAGE)
-    # args:
-    #     - --device /dev/fuse:rw
-    #     - --security-opt
-    #     - seccomp=unconfined
-    #     - --security-opt
-    #     - apparmor=unconfined
-    workingDir: $(params.WORKING_DIRECTORY)
-    # Capability of turning caching on and off by adding or removing --no-cache option to buildah.
-    script: |
-      #!/usr/bin/env bash
-      buildah --storage-driver=$(params.BUILDAH_STORAGE_DRIVER) bud --ulimit nofile=1048576:1048576 \
-      --format=$(params.STANDARD_IMAGE_FORMAT) --tls-verify=$(params.VAPO_QUAY_TLSVERIFY) \
-      -f $(params.DOCKERFILE_NAME) -t $(params.TAG_IMAGE_NAME) $(params.DOCKER_CONTEXT_ROOT)
-      buildah push $(buildah images | grep -E '^quay.vapo.va.gov\/vic-dev\/dev.*1.0.0' | awk -e '{print $3}') oci:/workspace/app-image:app:1.0.0
-    volumeMounts:
-    - name: varlibcontainers
-      mountPath: /var/lib/containers
-  - name: get-latest-cve-findings
-    image: quay.io/ksummersill2/ubuntu-wget:1.0.0
-    script: |
-      mkdir -p /tekton/home/.cache/trivy/db
-      wget -O /tekton/home/.cache/trivy/db/trivy-offline.db.tgz https://github.com/aquasecurity/trivy-db/releases/latest/download/trivy-offline.db.tgz --no-check-certificate
-      cd /tekton/home/.cache/trivy/db
-      tar xvf trivy-offline.db.tgz
-  - name: initial-oci-scan
-    image: $(params.TRIVY_IMAGE)
-    workingDir: $(params.WORKING_DIRECTORY)
-    script: |
-      pwd
-      trivy image --skip-update --input /workspace/app-image --severity='HIGH,CRITICAL' --vuln-type='os,library' --format='table'
-    volumeMounts:
-    - name: varlibcontainers
-      mountPath: /var/lib/containers
-  - name: push-image-to-vapo-quay-dev
-    image: $(params.BUILDAH_IMAGE)
-    workingDir: $(params.WORKING_DIRECTORY)
-    script: |
-      buildah --storage-driver=$(params.BUILDAH_STORAGE_DRIVER) push \
-      --tls-verify=$(params.VAPO_QUAY_TLSVERIFY) \
-      --digestfile docker/image-digest $(params.TAG_IMAGE_NAME) docker://$(params.TAG_IMAGE_NAME)
-    volumeMounts:
-    - name: varlibcontainers
-      mountPath: /var/lib/containers
+    - image: $(params.BUILDAH_IMAGE)
+      name: build-image
+      resources: {}
+      script: >
+        #!/usr/bin/env bash
+
+        buildah bud --format=$(params.STANDARD_IMAGE_FORMAT)
+        --storage-driver=$(params.BUILDAH_STORAGE_DRIVER) -f
+        $(params.DOCKERFILE_NAME) -t app:1.0.0 .
+
+
+        buildah push --format=$(params.STANDARD_IMAGE_FORMAT)
+        --storage-driver=$(params.BUILDAH_STORAGE_DRIVER) app:1.0.0
+        oci:/workspace/source/image
+
+        buildah tag --storage-driver=$(params.BUILDAH_STORAGE_DRIVER) app:1.0.0
+        $(params.TAG_IMAGE_NAME)
+      volumeMounts:
+        - mountPath: /var/lib/containers
+          name: varlibcontainers
+      workingDir: $(params.WORKING_DIRECTORY)
+    - image: 'quay.io/ksummersill2/ubuntu-wget:1.0.0'
+      name: get-latest-cve-findings
+      resources: {}
+      script: >
+        mkdir -p /tekton/home/.cache/trivy/db
+
+        wget -O /tekton/home/.cache/trivy/db/trivy-offline.db.tgz
+        https://github.com/aquasecurity/trivy-db/releases/latest/download/trivy-offline.db.tgz
+        --no-check-certificate
+
+        cd /tekton/home/.cache/trivy/db
+
+        tar xvf trivy-offline.db.tgz
+    - image: $(params.TRIVY_IMAGE)
+      name: initial-oci-scan
+      resources: {}
+      script: >
+        trivy image --skip-update --input /workspace/source/image
+        --exit-code=$(params.EXIT_CODE) --severity=$(params.SEVERITY_LVL)
+        --vuln-type=$(params.VUL_TYPE) --format=table >
+        /workspace/source/cve-report.txt
+      volumeMounts:
+        - mountPath: /var/lib/containers
+          name: varlibcontainers
+      workingDir: $(params.WORKING_DIRECTORY)
+    - image: 'quay.io/ksummersill2/ubuntu-wget:1.0.0'
+      name: send-cve-report-to-nexus3
+      resources: {}
+      script: >
+        curl -v -u admin:#Newyear2065# --upload-file
+        /workspace/source/cve-report.txt
+        http://nexus3-openshift-operators.apps.vapo-ppd.va.gov/repository/vapo/
+    - image: $(params.BUILDAH_IMAGE)
+      name: push-image-to-vapo-quay-dev
+      resources: {}
+      script: >
+        buildah push --storage-driver=$(params.BUILDAH_STORAGE_DRIVER)
+        --tls-verify=$(params.VAPO_QUAY_TLSVERIFY) $(params.TAG_IMAGE_NAME)
+      volumeMounts:
+        - mountPath: /var/lib/containers
+          name: varlibcontainers
+      workingDir: $(params.WORKING_DIRECTORY)
   volumes:
-  - name: varlibcontainers
-    emptyDir: {}
+    - emptyDir: {}
+      name: varlibcontainers
