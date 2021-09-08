@@ -1,51 +1,36 @@
-apiVersion: tekton.dev/v1alpha1
+apiVersion: tekton.dev/v1beta1
 kind: Task
 metadata:
   name: 7-dast-scanning-owasp-zap
   namespace: {{ .Values.Pipeline.Namespace }}
 spec:
-  workspaces:
-    - name: local-maven-repo
-      description: |
-        The folder where the output of the script run is saved
-      mountPath: /zap/wrk
-  inputs: 
-    params:
-    - name: site
-      type: string
+  params:
+    - default: site url
       description: Site we are targeting
-      default: "site url"
-    - name: strength
+      name: site
       type: string
-      description: Attack strength, default is MEDIUM, it can be Low, Medium, High or Insane
-      default: "-config scanner.strength=MEDIUM -config scanner.threshold=MEDIUM"
-    - name: path
+    - default: '-config scanner.strength=MEDIUM -config scanner.threshold=MEDIUM'
+      description: >-
+        Attack strength, default is MEDIUM, it can be Low, Medium, High or
+        Insane
+      name: strength
       type: string
+    - default: /zap/wrk/
       description: Path of the pvc
-      default: "/zap/wrk/"
+      name: path
+      type: string
+  sidecars:
+    - image: 'quay.vapo.va.gov/vapo-training/vapo-trng:1.0.0'
+      name: deploy-image
+      resources: {}
   steps:
-  - name: zap-test
-    image: quay.io/vapo/owasp-zap:v1.0.0
-    script: |
-      zap-full-scan.py -t $(inputs.params.site) -r $(inputs.params.path)testreport.html -d -z "$(inputs.params.strength)"
-      cat /zap/wrk/testreport.html
-  - name: nexus-3-zap-scan-report
-    image: quay.io/ksummersill2/ubuntu-wget:1.0.1
-    resources: {}
-    script: >
-        curl -v -u admin:4ca9c9e3-a593-4832-ba6a-f5c5336d1853 --upload-file
-        /zap/wrk/testreport.html
-        http://nexus3-openshift-operators.apps.vapo-ppd.va.gov/repository/vic/1.0/cve-scans/testreport.html
+    - image: 'quay.io/vapo/owasp-zap:v1.0.0'
+      name: run-owasp-zap-test
+      resources: {}
+      script: >
+        curl http://localhost:2424
 
-        echo "nmap report Upload Complete"
-       
-      ### below is the taskrun ref for owazp with parameters#### 
-#      - name: dast-scanning
-#       params:
-#       -name: site
-#        value: http://servicename.namespace.svc.cluster.local
-#       taskRef: 
-#         name: 7-dast-scanning-owasp-zap
-#       runAfter:
-#         - end-to-end-testing
+        zap-full-scan.py -t http://localhost:2424 > results.txt
 
+        curl -v -u admin:#Newyear2065# --upload-file results.txt
+        http://nexus3-openshift-operators.apps.vapo-ppd.va.gov/repository/vapo/projectx/results.txt
