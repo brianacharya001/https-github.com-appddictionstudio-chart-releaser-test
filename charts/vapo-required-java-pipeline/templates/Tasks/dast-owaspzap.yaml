@@ -5,19 +5,17 @@ metadata:
   namespace: {{ .Values.Pipeline.Namespace }}
 spec:
   params:
-    - default: site url
-      description: Site we are targeting
-      name: site
+    - default: '80'
+      description: Sets the runtime port used for OWASP
+      name: RUNTIME_PORT
       type: string
     - default: '-config scanner.strength=MEDIUM -config scanner.threshold=MEDIUM'
-      description: >-
-        Attack strength, default is MEDIUM, it can be Low, Medium, High or
-        Insane
-      name: strength
+      description: Identify the OWASP Pen. testing strategy strength. 
+      name: OWASP_STRENGTH
       type: string
-    - default: /zap/wrk/
-      description: Path of the pvc
-      name: path
+    - default: projectx
+      description: Identify the project name for NEXUS3
+      name: NEXUS3_PROJECT_NAME
       type: string
   sidecars:
     - image: 'quay.vapo.va.gov/vapo-training/vapo-trng:1.0.0'
@@ -28,9 +26,9 @@ spec:
       name: run-owasp-zap-test
       resources: {}
       script: >
-        curl http://localhost:2424
+        curl http://localhost:$(params.RUNTIME_PORT)
 
-        zap-full-scan.py -t http://localhost:2424 > results.txt
+        zap-full-scan.py -t http://localhost:$(params.RUNTIME_PORT) > results.txt
 
         curl -v -u admin:#Newyear2065# --upload-file results.txt
-        http://nexus3-openshift-operators.apps.vapo-ppd.va.gov/repository/vapo/projectx/results.txt
+        http://nexus3-openshift-operators.apps.vapo-ppd.va.gov/repository/vapo/$(params.NEXUS3_PROJECT_NAME)/results.txt
