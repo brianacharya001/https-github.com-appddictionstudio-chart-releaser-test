@@ -2,7 +2,7 @@ apiVersion: tekton.dev/v1beta1
 kind: Task
 metadata:
   name: 4-buildah-task
-  namespace: xxxx-vapo-trng
+  namespace: {{ .Values.Pipeline.Namespace }}
 spec:
   params:
     - default: 'false'
